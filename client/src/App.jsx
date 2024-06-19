@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import { loadUser } from "./actions/userAction/userAction";
+import HomePage from "./pages/Home";
+import LoginPage from "./pages/Login";
+import Page404 from "./pages/Page404";
+import SignupPage from "./pages/Signup";
+import DashboardPage from "./pages/Dashboard";
+import BlogPage from "./pages/Blog";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.User);
+
+  const loadUsers = async () => {
+    await dispatch(loadUser());
+  };
+  useEffect(() => {
+    if (!user) {
+      loadUsers();
+    }
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/blog/:id" element={<BlogPage />} />
+        <Route
+          path="/login"
+          element={
+            <div className="min-h-full h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+              <div className="max-w-md w-full space-y-8">
+                <LoginPage />
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <div className="min-h-full h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+              <div className="max-w-md w-full space-y-8">
+                <SignupPage />
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <div className="min-h-full h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+              <div className="max-w-md w-full space-y-8">
+                <Page404 />
+              </div>
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
