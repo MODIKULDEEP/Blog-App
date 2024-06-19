@@ -32,20 +32,20 @@ export default function BlogPage() {
       {blog ? (
         <div className="container mx-auto pt-20">
           <img
-            class="rounded-t-lg"
+            className="rounded-t-lg"
             src={`${url}/api/image/${blog.blog_photo}`}
             alt={blog.blogTitle}
           />
-          <div class="p-5">
+          <div className="p-5">
             <a href="#">
-              <h5 class="mb-3 text-2xl font-bold tracking-tight">
+              <h5 className="mb-3 text-2xl font-bold tracking-tight">
                 {blog.blogTitle}
               </h5>
             </a>
-            <p class="mb-3 font-normal font-semibold">
+            <p className="mb-3 font-normal font-semibold">
               Author: {blog.author.name}
             </p>
-            <p class="mb-3 font-normal font-semibold">{blog.description}</p>
+            <p className="mb-3 font-normal font-semibold">{blog.description}</p>
           </div>
         </div>
       ) : null}

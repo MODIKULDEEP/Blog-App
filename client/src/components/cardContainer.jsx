@@ -4,6 +4,7 @@ import Pagination from "./Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const url = import.meta.env.VITE_BACKEND_APP_URI;
 
@@ -12,6 +13,8 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
   const [editBlog, setEditBlog] = useState(null);
   const [blogTitle, setBlogTitle] = useState("");
   const [description, setDescription] = useState("");
+  const { user } = useSelector((state) => state.User);
+  console.log(user);
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 4;
@@ -89,28 +92,28 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {currentBlogs.map((blog) => (
-              <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                  <img
-                    class="rounded-t-lg"
-                    src={`${url}/api/image/${blog.blog_photo}`}
-                    alt={blog.blogTitle}
-                  />
-                <div class="p-5">
+              <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <img
+                  className="rounded-t-lg"
+                  src={`${url}/api/image/${blog.blog_photo}`}
+                  alt={blog.blogTitle}
+                />
+                <div className="p-5">
                   <a href="#">
-                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                       {blog.blogTitle}
                     </h5>
                   </a>
-                  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                  <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                     Author: {blog.author.name}
                   </p>
                   <Link
                     to={`/blog/${blog._id}`}
-                    class="inline-flex items-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 mb-2 rounded"
+                    className="inline-flex items-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 mb-2 rounded"
                   >
                     Read
                     <svg
-                      class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
+                      className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -125,7 +128,7 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                       />
                     </svg>
                   </Link>
-                  {edit ? (
+                  {user && user.name === blog.author.name ? (
                     <div className="flex">
                       <button
                         id={blog._id}
