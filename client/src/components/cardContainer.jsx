@@ -13,8 +13,12 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
   const [editBlog, setEditBlog] = useState(null);
   const [blogTitle, setBlogTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [blogDataState, setBlogDataState] = useState({
+    blogTitle: "",
+    description: "",
+    errors: {},
+  });
   const { user } = useSelector((state) => state.User);
-  console.log(user);
   // pagination
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 4;
@@ -25,25 +29,38 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!blogTitle || !description) {
-      alert("Please Fill All Data");
-      return;
-    }
-    const blogData = { blogTitle, description, id: editBlog._id };
-    try {
-      const data = await updateBlog(blogData);
-      if (data.success) {
-        setBlogTitle("");
-        setDescription("");
-        handleClosePopup(); // Close the popup
-        onClose();
-        toast.success(data.message);
-      } else {
-        toast.error(data.error.data.message);
+    const errors = validateForm(blogDataState);
+    if (Object.keys(errors).length === 0) {
+      setBlogDataState({ ...blogDataState, errors: errors });
+      const blogData = { blogTitle, description, id: editBlog._id };
+      try {
+        const data = await updateBlog(blogData);
+        if (data.success) {
+          setBlogTitle("");
+          setDescription("");
+          handleClosePopup(); // Close the popup
+          onClose();
+          toast.success(data.message);
+        } else {
+          toast.error(data.error.data.message);
+        }
+      } catch (error) {
+        toast.error(error);
       }
-    } catch (error) {
-      toast.error(error);
+    } else {
+      setBlogDataState({ ...blogDataState, errors: errors });
     }
+  };
+
+  const validateForm = (formData) => {
+    const errors = {};
+    if (!formData.blogTitle.trim()) {
+      errors.blogTitle = "Blog Title is required";
+    }
+    if (!formData.description.trim()) {
+      errors.description = "Blog Description is required";
+    }
+    return errors;
   };
 
   const handleCancel = () => {
@@ -57,6 +74,7 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
       const deletedBlog = await deleteBlog(id);
       if (deletedBlog.success) {
         toast.success(deletedBlog.message);
+        blogs = blogs.filter((i) => i._id !== id);
         onClose();
       } else {
         toast.error(deletedBlog.error.data.message);
@@ -70,6 +88,11 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
     setEditBlog(blogById);
     setBlogTitle(blogById.blogTitle);
     setDescription(blogById.description);
+    setBlogDataState({
+      ...blogDataState,
+      blogTitle: blogById.blogTitle,
+      description: blogById.description,
+    });
     setIsPopupOpen(true);
   };
 
@@ -92,7 +115,10 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {currentBlogs.map((blog) => (
-              <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+              <div
+                className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+                key={blog._id}
+              >
                 <img
                   className="rounded-t-lg"
                   src={`${url}/api/image/${blog.blog_photo}`}
@@ -121,9 +147,9 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                     >
                       <path
                         stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
                         d="M1 5h12m0 0L9 1m4 4L9 9"
                       />
                     </svg>
@@ -156,6 +182,7 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                   encType="multipart/form-data"
                   onSubmit={handleSave}
                   className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-lg shadow-lg"
+                  noValidate
                 >
                   <h2 className="text-2xl font-bold mb-4">Edit Blog</h2>
                   <div className="mb-4">
@@ -167,9 +194,20 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                       id="blogTitle"
                       value={blogTitle}
                       required
-                      onChange={(e) => setBlogTitle(e.target.value)}
+                      onChange={(e) => {
+                        setBlogTitle(e.target.value);
+                        setBlogDataState({
+                          ...blogDataState,
+                          blogTitle: e.target.value,
+                        });
+                      }}
                       className="w-full border border-gray-300 rounded px-4 py-2"
                     />
+                    {blogDataState.errors.blogTitle && (
+                      <p className="text-red-500">
+                        {blogDataState.errors.blogTitle}
+                      </p>
+                    )}
                   </div>
                   <div className="mb-4">
                     <label htmlFor="description" className="block mb-1">
@@ -179,9 +217,20 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                       id="description"
                       required
                       value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={(e) => {
+                        setDescription(e.target.value);
+                        setBlogDataState({
+                          ...blogDataState,
+                          description: e.target.value,
+                        });
+                      }}
                       className="w-full border border-gray-300 rounded px-4 py-2 resize-none"
                     ></textarea>
+                    {blogDataState.errors.description && (
+                      <p className="text-red-500">
+                        {blogDataState.errors.description}
+                      </p>
+                    )}
                   </div>
                   <div className="flex justify-end">
                     <button

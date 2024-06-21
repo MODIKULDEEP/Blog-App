@@ -55,11 +55,6 @@ export default function Signup() {
         formData.password
       )
     ) {
-      console.log(
-        !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/.test(
-          formData.password
-        )
-      );
       errors.password =
         "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character";
     }
@@ -90,7 +85,7 @@ export default function Signup() {
   return (
     <>
       <ToastContainer position="top-center" autoClose={3000} />
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
         <div className="my-5">
           <label htmlFor="name" className="sr-only">
             Name

@@ -31,6 +31,7 @@ export default function Login() {
     e.preventDefault();
     const errors = validateForm(loginState);
     if (Object.keys(errors).length === 0) {
+      setLoginState({ ...loginState, errors: errors });
       authenticateUser();
     } else {
       setLoginState({ ...loginState, errors: errors });
@@ -74,7 +75,7 @@ export default function Login() {
   return (
     <>
       <ToastContainer position="top-center" autoClose={3000} />
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
         <div className="-space-y-px">
           <div className="my-5">
             <label htmlFor="email" className="sr-only">

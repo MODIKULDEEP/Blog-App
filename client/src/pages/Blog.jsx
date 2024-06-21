@@ -10,19 +10,21 @@ const url = import.meta.env.VITE_BACKEND_APP_URI;
 export default function BlogPage() {
   const [blog, setBlog] = useState();
   const { id } = useParams();
-  console.log(id);
 
-  useEffect(async () => {
-    try {
-      const data = await getBlog(id);
-      if (data.success) {
-        setBlog(data.blog);
-      } else {
-        toast.error(data.error.data.message);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getBlog(id);
+        if (data.success) {
+          setBlog(data.blog);
+        } else {
+          toast.error(data.error.data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
       }
-    } catch (error) {
-      toast.error(error);
     }
+    fetchData();
   }, []);
 
   return (
