@@ -51,7 +51,7 @@ export default function Signup() {
     if (!formData.password.trim()) {
       errors.password = "Password is required";
     } else if (
-      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/.test(
+      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&^#~`|\\<>;:{}[\](),.?+_=\-]{8,}/.test(
         formData.password
       )
     ) {
@@ -72,7 +72,7 @@ export default function Signup() {
       if (result.success) {
         toast.success("Account created successfully!");
         setTimeout(() => {
-          Navigate("/login");
+          Navigate("/");
         }, 2000);
       } else {
         toast.error(result.error.data.message);

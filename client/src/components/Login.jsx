@@ -48,7 +48,7 @@ export default function Login() {
     if (!formData.password.trim()) {
       errors.password = "Password is required";
     } else if (
-      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/.test(
+      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&^#~`|\\<>;:{}[\](),.?+_=\-]{8,}/.test(
         formData.password
       )
     ) {
@@ -61,7 +61,7 @@ export default function Login() {
   const data = useSelector((state) => state.User);
   useEffect(() => {
     if (data.user !== null) {
-      Navigate("/");
+      Navigate("/home");
     } else {
       toast.error(data.error);
     }

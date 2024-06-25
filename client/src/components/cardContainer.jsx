@@ -104,6 +104,24 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  // Function to convert ISO date to IST
+  const convertToIST = (isoDate) => {
+    // Parse the ISO date
+    const date = new Date(isoDate);
+
+    // Options for formatting the date
+    const options = {
+      timeZone: "Asia/Kolkata", // IST time zone
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+
+    // Format the date to IST
+    const formattedDate = date.toLocaleString("en-IN", options);
+    return formattedDate;
+  };
+
   return (
     <>
       <ToastContainer position="top-center" autoClose={3000} />
@@ -125,13 +143,14 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                   alt={blog.blogTitle}
                 />
                 <div className="p-5">
-                  <a href="#">
-                    <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                      {blog.blogTitle}
-                    </h5>
-                  </a>
+                  <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {blog.blogTitle}
+                  </h5>
                   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                     Author: {blog.author.name}
+                  </p>
+                  <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                    Publish Date: {convertToIST(blog.createdAt)}
                   </p>
                   <Link
                     to={`/blog/${blog._id}`}
@@ -154,7 +173,7 @@ export default function CardContainer({ edit, blogs = [], onClose }) {
                       />
                     </svg>
                   </Link>
-                  {user && user.name === blog.author.name ? (
+                  {edit && user && user.name === blog.author.name ? (
                     <div className="flex">
                       <button
                         id={blog._id}

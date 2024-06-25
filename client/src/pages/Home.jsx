@@ -4,12 +4,23 @@ import { getAllBlogs } from "../api/blogApis";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [blogs, setBlogs] = useState([]);
   const [orignalBlogs, setOrignalBlogs] = useState([]);
   const [FilterValues, setFilterValues] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const Navigate = useNavigate();
+  const data = useSelector((state) => state.User);
+  useEffect(() => {
+    if (data.user === null) {
+      Navigate("/");
+    }
+  }, [data]);
+
   useEffect(() => {
     getBlogData();
   }, []);

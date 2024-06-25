@@ -44,7 +44,7 @@ export default function NavHeader() {
             </>
           ) : (
             <Link
-              to="/login"
+              to="/"
               className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded"
             >
               Login
